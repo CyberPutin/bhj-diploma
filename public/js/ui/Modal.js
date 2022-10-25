@@ -4,7 +4,7 @@
  * В первую очередь это открытие или
  * закрытие имеющихся окон
  * */
-class Modal {
+ class Modal {
   /**
    * Устанавливает текущий элемент в свойство element
    * Регистрирует обработчики событий с помощью Modal.registerEvents()
@@ -13,7 +13,7 @@ class Modal {
    * */
   constructor(element) {
     if (!element) {
-      throw new Error('Элемент не существует');
+      throw new Error('Элемент не обнаружен');
     }
     this.element = element;
     this.registerEvents();
@@ -25,8 +25,10 @@ class Modal {
    * (с помощью метода Modal.onClose)
    * */
   registerEvents() {
-    [...this.element.querySelectorAll('[data-dismiss="modal"]')].forEach(btn => {
-      btn.onclick = e => this.onClose(e);
+    this.element.querySelectorAll('[data-dismiss="modal"]').forEach(btn => {
+      btn.onclick = e => {
+        this.onClose(e);
+      };
     });
   }
 
@@ -38,6 +40,7 @@ class Modal {
     e.preventDefault();
     this.close();
   }
+
   /**
    * Открывает окно: устанавливает CSS-свойство display
    * со значением «block»
@@ -45,6 +48,7 @@ class Modal {
   open() {
     this.element.style.display = 'block';
   }
+
   /**
    * Закрывает окно: удаляет CSS-свойство display
    * */

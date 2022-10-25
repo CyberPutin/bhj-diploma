@@ -2,13 +2,13 @@
  * Класс CreateTransactionForm управляет формой
  * создания новой транзакции
  * */
-class CreateTransactionForm extends AsyncForm {
+ class CreateTransactionForm extends AsyncForm {
   /**
    * Вызывает родительский конструктор и
    * метод renderAccountsList
    * */
   constructor(element) {
-    super(element);
+    super(element)
     this.renderAccountsList();
   }
 
@@ -17,17 +17,16 @@ class CreateTransactionForm extends AsyncForm {
    * Обновляет в форме всплывающего окна выпадающий список
    * */
   renderAccountsList() {
-    if (User.current()) {
-      Account.list(User.current(), (err, resp) => {
-        if (resp && resp.success) {
-          this.updateSelect(resp.data);
-        } else {
-          console.error(err);
-        }
-      });
-    }
+    const ACCOUNTS_LIST = this.element.querySelector('.accounts-select');
+    Account.list(User.current(), (err, response) => {
+      if (response && response.data) {
+        ACCOUNTS_LIST.innerHTML = '';
+        response.data.forEach(item => {
+          ACCOUNTS_LIST.innerHTML += `<option value="${item.id}">${item.name}</option>`;
+        })
+      }
+    })
   }
-
   /**
    * Создаёт новую транзакцию (доход или расход)
    * с помощью Transaction.create. По успешному результату
@@ -35,13 +34,17 @@ class CreateTransactionForm extends AsyncForm {
    * в котором находится форма
    * */
   onSubmit(data) {
-    Transaction.create(data, (err, resp) => {
-      if (resp && resp.success) {
+    let modifiedData = data;
+    if (this.element == document.getElementById('new-expense-form')) {
+      modifiedData.type = 'expense';
+    } else {
+      modifiedData.type = 'income';
+    };
+    Transaction.create(modifiedData, (err, response) => {
+      if (response.success) {
+        this.element.reset();
+        this.element.closest('.modal').style.display = 'none';
         App.update();
-        App.getModal('newIncome').close();
-        App.getModal('newExpense').close();
-      } else {
-        console.error(err);
       }
     });
   }

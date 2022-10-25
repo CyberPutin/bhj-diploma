@@ -3,15 +3,13 @@
  * регистрацией пользователя из приложения
  * Имеет свойство URL, равное '/user'.
  * */
-class User {
-  static URL = '/user';
-    /**
+ class User {
+  /**
    * Устанавливает текущего пользователя в
    * локальном хранилище.
    * */
   static setCurrent(user) {
     localStorage.setItem('user', JSON.stringify(user));
-
   }
 
   /**
@@ -27,8 +25,9 @@ class User {
    * из локального хранилища
    * */
   static current() {
-    return localStorage.user ? JSON.parse(localStorage.user) : undefined;
-  } 
+    const user = localStorage.user;
+    return user ? JSON.parse(user) : user;
+  }
 
   /**
    * Получает информацию о текущем
@@ -44,7 +43,7 @@ class User {
         } else {
           this.unsetCurrent();
         }
-        
+
         callback(err, response);
       }
     });
@@ -58,7 +57,7 @@ class User {
    * */
   static login(data, callback) {
     createRequest({
-      url: this.URL + '/login',
+      url: this.URL + "/login",
       method: 'POST',
       data,
       callback: (err, response) => {
@@ -94,16 +93,19 @@ class User {
    * Производит выход из приложения. После успешного
    * выхода необходимо вызвать метод User.unsetCurrent
    * */
-  static logout(callback) {
+  static logout(data, callback) {
     createRequest({
       url: this.URL + '/logout',
       method: 'POST',
+      data,
       callback: (err, response) => {
-        if (response?.success && response?.user) {
-          this.unsetCurrent(response.user);
+        if (response && response.user) {
+          this.unsetCurrent();
         }
         callback(err, response);
       }
     });
   }
 }
+
+User.URL = '/user';

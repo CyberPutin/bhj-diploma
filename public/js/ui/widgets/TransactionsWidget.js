@@ -4,17 +4,15 @@
  * создания нового дохода или расхода
  * */
 
-class TransactionsWidget {
+ class TransactionsWidget {
   /**
    * Устанавливает полученный элемент
    * в свойство element.
    * Если переданный элемент не существует,
    * необходимо выкинуть ошибку.
    * */
-  constructor( element ) {
-    if (!element) {
-      throw new Error('Элемент не существует');
-    }
+  constructor(element) {
+    if (!element) throw new Error('Элемент не обнаружен');
     this.element = element;
     this.registerEvents();
   }
@@ -25,15 +23,12 @@ class TransactionsWidget {
    * экземпляра окна
    * */
   registerEvents() {
-    const newIncome = this.element.querySelector('.create-income-button');
-    const newExpense = this.element.querySelector('.create-expense-button');
-
-    newIncome.addEventListener('click', (e) => {
-      App.getModal('newIncome').open();
-    });
-
-    newExpense.addEventListener('click', (e) => {
-      App.getModal('newExpense').open();
-    });
+    this.element.addEventListener('click', e => {
+      if (e.target.classList.contains('create-income-button')) {
+        App.getModal('newIncome').open();
+      } else if (e.target.classList.contains('create-expense-button')) {
+        App.getModal('newExpense').open();
+      }
+    })
   }
 }
